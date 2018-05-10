@@ -63,7 +63,7 @@
   <plugin name="cordova-plugin-statusbar" />
   <plugin name="cordova-custom-config" spec="1.2.6"/>
   <plugin name="cordova-plugin-dialogs" spec="1.2.1"/>
-  <plugin name="phonegap-plugin-barcodescanner" />
+  <plugin name="phonegap-plugin-barcodescanner">
     <param name="CAMERA_USAGE_DESCRIPTION" value="Lector Punto Venta"/>
   </plugin>
   <plugin name="cordova-plugin-bluetooth-serial">
