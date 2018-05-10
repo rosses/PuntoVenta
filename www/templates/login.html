@@ -1,0 +1,33 @@
+<ion-view view-title="Login">
+  <ion-content class="padding">
+    <br />
+    <br />
+    <div class="text-center">
+    <img src="img/logo.png" width="300" style="height:auto;" />
+    </div>
+    <br />
+    <br />
+    <form name="signinForm" novalidate="" ng-submit="signIn(signinForm)">
+
+
+        <label class="item item-input" 
+               ng-class="{ 'has-error-lr' : signinForm.password.$invalid  && signinForm.$submitted, 'valid-lr' : signinForm.password.$valid  && signinForm.$submitted}">
+          <span class="input-label">Clave instalación</span>
+          <input type="password"
+                 name="password"
+                 ng-model="user.password" 
+                 ng-minlength="1" 
+                 ng-maxlength="25"
+                 required>
+        </label>
+
+      </div>
+      <div class="padding">
+        <button class="button button-block button-positive">
+          Conectarse
+        </button>
+      </div>
+
+    </form>
+  </ion-content>
+</ion-view>
