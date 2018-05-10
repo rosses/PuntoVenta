@@ -27,6 +27,40 @@ angular.module('samsungcot.controllers', [])
 		$state.go("home.main");
 	};
 
+
+
+})
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicSideMenuDelegate, $ionicPopup, $ionicLoading) {
+
+})
+
+.controller('HomeCtrl', function($scope, $state, $localStorage, $location, $timeout, $ionicLoading, $ionicPopup) {
+  
+  
+  if (!$localStorage.app) { $localStorage.app = app;  }
+  if ($localStorage.app.auth == 0) {
+      $location.path( "login", false );
+  }
+  
+  $scope.showload = function() {
+    $ionicLoading.show({
+      template: '<ion-spinner></ion-spinner>'
+    }).then(function(){
+       //console.log("The loading indicator is now displayed");
+    });
+  };
+  $scope.hideload = function(){
+    $ionicLoading.hide().then(function(){
+       //console.log("The loading indicator is now hidden");
+    });
+  };
+
+  $scope.cotLista = [];
+  $scope.printerbox = {};
+  $scope.cargandoPrinters = false;
+  $scope.noPrinterFound = false;
+  printers = [];
+  $scope.printerList=printers;
   $scope.agregarProducto = function() {
    cordova.plugins.barcodeScanner.scan(
       function (result) {
@@ -63,68 +97,34 @@ angular.module('samsungcot.controllers', [])
       }
    );
   }
-	$scope.agregarSeleccion = function(item) {
-		if (item) { //$scope.addprod.sel
-			// verificar existe
+  $scope.agregarSeleccion = function(item) {
+    if (item) { //$scope.addprod.sel
+      // verificar existe
       console.log(item);
-			var modificaExistente = 0;
-			for (var i = 0; i < $scope.cotLista.length ; i++) {
-				if ($scope.cotLista[i].codigo == item.codigo) {
-					$scope.cotLista[i].cantidad = (parseInt($scope.cotLista[i].cantidad) + 1);
-					$scope.cotLista[i].total = ($scope.cotLista[i].precio * $scope.cotLista[i].cantidad); 
-					modificaExistente = 1;
-					break;
-				}
-			}
+      var modificaExistente = 0;
+      for (var i = 0; i < $scope.cotLista.length ; i++) {
+        if ($scope.cotLista[i].codigo == item.codigo) {
+          $scope.cotLista[i].cantidad = (parseInt($scope.cotLista[i].cantidad) + 1);
+          $scope.cotLista[i].total = ($scope.cotLista[i].precio * $scope.cotLista[i].cantidad); 
+          modificaExistente = 1;
+          break;
+        }
+      }
 
-			if (modificaExistente == 0) {
-				item.cantidad = 1;
-				item.total = (parseInt(item.precio) * 1);
-				$scope.cotLista.push(item);
-			}
+      if (modificaExistente == 0) {
+        item.cantidad = 1;
+        item.total = (parseInt(item.precio) * 1);
+        $scope.cotLista.push(item);
+      }
 
-			$scope.calcularTotales();
-			$state.go("home.main");
+      $scope.calcularTotales();
+      $state.go("home.main");
 
-		}
-		else {
-			err('No esta agregando nada');
-		}
-	};
-
-
-})
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicSideMenuDelegate, $ionicPopup, $ionicLoading) {
-
-})
-
-.controller('HomeCtrl', function($scope, $state, $localStorage, $location, $timeout, $ionicLoading, $ionicPopup) {
-  
-  
-  if (!$localStorage.app) { $localStorage.app = app;  }
-  if ($localStorage.app.auth == 0) {
-      $location.path( "login", false );
-  }
-  
-  $scope.showload = function() {
-    $ionicLoading.show({
-      template: '<ion-spinner></ion-spinner>'
-    }).then(function(){
-       //console.log("The loading indicator is now displayed");
-    });
+    }
+    else {
+      err('No esta agregando nada');
+    }
   };
-  $scope.hideload = function(){
-    $ionicLoading.hide().then(function(){
-       //console.log("The loading indicator is now hidden");
-    });
-  };
-
-  $scope.cotLista = [];
-  $scope.printerbox = {};
-  $scope.cargandoPrinters = false;
-  $scope.noPrinterFound = false;
-  printers = [];
-  $scope.printerList=printers;
 
 	$scope.limpiarCotizacion = function() {
       var confirmPopup = $ionicPopup.confirm({
