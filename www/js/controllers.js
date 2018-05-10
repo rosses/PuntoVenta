@@ -73,7 +73,7 @@ angular.module('samsungcot.controllers', [])
           $state.go("home.main");
         }
         else {
-          agregarSeleccion(data.items[0]);
+          $scope.agregarSeleccion(data.items[0]);
           //alert($scope.cotLista.length);
         }
       },"json").fail(function() { err("No responde el servidor, revise su conexión a internet"); });
@@ -89,7 +89,7 @@ angular.module('samsungcot.controllers', [])
           torchOn: false, // Android, launch with the torch switched on (if available)
           saveHistory: false, // Android, save scan history (default false)
           prompt : "Por favor ajuste el codigo al centro", // Android
-          resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+          resultDisplayDuration: 0, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
           formats : "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
           //orientation : "landscape", // Android only (portrait|landscape), default unset so it rotates with the device
           disableAnimations : true, // iOS
