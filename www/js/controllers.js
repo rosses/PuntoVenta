@@ -90,7 +90,7 @@ angular.module('samsungcot.controllers', [])
           saveHistory: false, // Android, save scan history (default false)
           prompt : "Por favor ajuste el codigo al centro", // Android
           resultDisplayDuration: 0, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
-          formats : "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
+          formats : "QR_CODE,PDF_417,CODE_128,EAN_13,CODE_39", // default: all but PDF_417 and RSS_EXPANDED
           //orientation : "landscape", // Android only (portrait|landscape), default unset so it rotates with the device
           disableAnimations : true, // iOS
           disableSuccessBeep: false // iOS and Android
