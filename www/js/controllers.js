@@ -83,7 +83,7 @@ angular.module('samsungcot.controllers', [])
           err("Error de escaner: "+error);
       },
       {
-          preferFrontCamera : true, // iOS and Android
+          preferFrontCamera : false, // iOS and Android
           showFlipCameraButton : false, // iOS and Android
           showTorchButton : true, // iOS and Android
           torchOn: false, // Android, launch with the torch switched on (if available)
