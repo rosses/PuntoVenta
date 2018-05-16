@@ -436,7 +436,7 @@ function escpos (_raw) {
 	};
 
 	
-	print.barcode2 = function(code) {
+	print.barcode2 = function(code, type) {
 		_barcode([0x1D, 0x68, 90], _raw);
 		_barcode(cmds['BARCODE_' + ((type || 'EAN13').replace('-', '_').toUpperCase())], _raw);
 		_barcode(code.toBytes(), _raw);
