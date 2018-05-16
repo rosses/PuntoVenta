@@ -405,7 +405,7 @@ function escpos (_raw) {
 	print.barcode = function(codes, qty, desc, type, width, height, position, font) {
 
 		// centrar
-		_barcode([0x1B, 0x61, 01], _raw);
+		//_barcode([0x1B, 0x61, 01], _raw);
 		// barcode h
 
 		for (i=0; i<codes.length; i++) {
@@ -436,11 +436,19 @@ function escpos (_raw) {
 	};
 
 	
-	print.barcode2 = function(code, type) {
-		_barcode([0x1D, 0x68, 90], _raw);
+	print.barcode2 = function(code, type, width, height, position, font) {
+
+		_barcode([0x1D, 0x68, height], _raw);
 		_barcode(cmds['BARCODE_' + ((type || 'EAN13').replace('-', '_').toUpperCase())], _raw);
 		_barcode(code.toBytes(), _raw);
 		_barcode(cmds.CTL_CR, _raw);
+		_barcode([ 0x1b, 0x21, 0x00 ], _raw); // texto chico
+		_barcode(cmds.CTL_LF, _raw);
+		_barcode(code.toBytes(), _raw);
+		_barcode(cmds.CTL_LF, _raw);
+	
+
+
 		return print;
 	}
 	
