@@ -424,7 +424,6 @@ function escpos (_raw) {
 		return print;
 	};
 
-	
 	print.barcode2 = function(code, type, width, height, position, font) {
 
 		_barcode([0x1B, 0x61, 01], _raw);
