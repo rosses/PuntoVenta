@@ -313,6 +313,7 @@ angular.module('samsungcot.controllers', [])
       .set({align: 'center', width: 1, height: 2})
       .text('---------- TOTAL ----------')
       .newLine(1)
+      .newLine(1)
       .set({align: 'left', width: 1, height: 2})
       .barcode2($scope.cotizacionNumber,'EAN13', 4, 90, 'BLW', 'B')
       .newLine(1)
@@ -357,7 +358,7 @@ angular.module('samsungcot.controllers', [])
                 function() {
                     bluetoothSerial.write(buffer, function() {
                       $scope.hideload();
-                      //$scope.cotLista = [];
+                      $scope.cotLista = [];
                     }, function() {
                       $scope.hideload();
                       err('No se pudo imprimir');
