@@ -41,6 +41,8 @@ angular.module('samsungcot.controllers', [])
   if ($localStorage.app.auth == 0) {
       $location.path( "login", false );
   }
+
+  $scope.cotizacionNumber = 0;
   
   $scope.showload = function() {
     $ionicLoading.show({
@@ -301,7 +303,7 @@ angular.module('samsungcot.controllers', [])
       .newLine(1)
       .text('PRE-VENTA')
       .newLine(1)
-      .text('NEGOCIO XXXX')
+      .text('POINTSALE.CL')
       .newLine(1)
       .text('---------------------------')
       .newLine(1)
@@ -309,6 +311,9 @@ angular.module('samsungcot.controllers', [])
       .newLine(1)
       .set({align: 'center', width: 1, height: 2})
       .text('-------- TOTAL --------')
+      .newLine(1)
+      .newLine(1)
+      .barcode2($scope.cotizacionNumber)
       .newLine(1)
       .text('$ '+miles($scope.neto))
       .set({align: 'center', width: 1, height: 1})
@@ -327,7 +332,7 @@ angular.module('samsungcot.controllers', [])
         var printTo = "";
         var printName = "";
         devices.forEach(function(device) {
-          if (device.name.toLowerCase().indexOf("abaprint") >= 0) {
+          if (device.name.toLowerCase().indexOf("abaprint") >= 0 || device.name.toLowerCase().indexOf("qsprinter") >= 0) {
             printTo = device.address;
             printName = device.name;
           }
@@ -335,24 +340,20 @@ angular.module('samsungcot.controllers', [])
 
         if (printTo == "") {
           $scope.hideload();
-          err('No se encontro impresora ABAPRINT. Enciendala');
+          err('No se encontro impresora ABAPRINT o QSPRINTER. Enciendala');
         }
         else {
+          // send server
 
-          var buffer = new Uint8Array(objetoImprimir()).buffer;
+          $scope.showload();
+          jQuery.post(app.restApi+"services/?action=save", {codes: $scope.getCodigos().join('|'), qtys: $scope.getCantidades().join('|'), descs: $scope.getDescripciones().join('|')}, function(data) {
 
-          bluetoothSerial.isConnected(
-              function() {
-                  bluetoothSerial.write(buffer, function() {
-                    $scope.hideload();
-                    //$scope.cotLista = [];
-                  }, function() {
-                    $scope.hideload();
-                    err('No se pudo imprimir');
-                  });
-              },
-              function() {
-                  bluetoothSerial.connect(printTo, function() {
+            $scope.cotizacionNumber = data.cotizacion;
+
+            var buffer = new Uint8Array(objetoImprimir()).buffer;
+
+            bluetoothSerial.isConnected(
+                function() {
                     bluetoothSerial.write(buffer, function() {
                       $scope.hideload();
                       //$scope.cotLista = [];
@@ -360,12 +361,26 @@ angular.module('samsungcot.controllers', [])
                       $scope.hideload();
                       err('No se pudo imprimir');
                     });
-                  }, function() {
-                    $scope.hideload();
-                    err('No se pudo conectar con '+printName)
-                  });
-              }
-          );
+                },
+                function() {
+                    bluetoothSerial.connect(printTo, function() {
+                      bluetoothSerial.write(buffer, function() {
+                        $scope.hideload();
+                        //$scope.cotLista = [];
+                      }, function() {
+                        $scope.hideload();
+                        err('No se pudo imprimir');
+                      });
+                    }, function() {
+                      $scope.hideload();
+                      err('No se pudo conectar con '+printName)
+                    });
+                }
+            );
+
+            $scope.hideload();
+
+          },"json");
 
         }
       }, function(e) { err('err'); err(JSON.stringify(e)); });

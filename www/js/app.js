@@ -1,5 +1,5 @@
 app = {
-        restApi:  "http://190.96.22.39:8085/",
+        restApi:  "http://app.pointsale.cl/",
         impID: "",
         impNN: "",
         impSERV: "18F0",

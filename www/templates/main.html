@@ -22,7 +22,7 @@
 	</div>
 
 	<div class="row detalle" ng-repeat="producto in cotLista">
-	  <div class="col col-10 text-center" style="padding:0;"><button class="button button-assertive button-small" ng-click="lineaChao('{{producto.codigo}}');"><i class="fa fa-trash"></i></button></div>
+	  <div class="col col-10 text-center" style="padding:0;"><br /><button class="button button-assertive button-small" ng-click="lineaChao('{{producto.codigo}}');"><i class="fa fa-trash"></i></button></div>
 	  <div class="col col-33">{{producto.codigo}} | <b>{{producto.descripcion}}</b><br />Stock: {{producto.stock}}</div>  
 	  <div class="col text-center">
 	  	<button class="button button-assertive button-small button-outline" ng-click="lineaMenos('{{producto.codigo}}');"><i class="fa fa-minus fa-fw"></i></button>

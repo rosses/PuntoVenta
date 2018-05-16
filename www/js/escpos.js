@@ -414,33 +414,35 @@ function escpos (_raw) {
 			descri = descri.replace(/\./g,' ').replace(/\//g,' ');
 			descri = descri.toBytes();
 			var code_qty = (codes[i]+' x '+qty[i]).toBytes();
+			_barcode([ 0x1b, 0x21, 0x00 ], _raw); // texto chico
+			_barcode(descri, _raw);
+			_barcode(cmds.CTL_LF, _raw);
+			_barcode(code_qty, _raw);
+			_barcode(cmds.CTL_LF, _raw);
+			/*
 			_barcode([0x1D, 0x68, height], _raw);
 			_barcode(cmds['BARCODE_' + ((type || 'EAN13').replace('-', '_').toUpperCase())], _raw);
 			_barcode(code.toBytes(), _raw);
 			_barcode(cmds.CTL_CR, _raw);
 			_barcode([ 0x1b, 0x21, 0x10 ], _raw); // texto grande
-			_barcode(code_qty, _raw);
-			_barcode(cmds.CTL_LF, _raw);
-			_barcode([ 0x1b, 0x21, 0x00 ], _raw); // texto chico
+			
 			_barcode(descri, _raw);
 			_barcode(cmds.CTL_LF, _raw);
 			_barcode(code.toBytes(), _raw);
-			_barcode(cmds.CTL_LF, _raw);
+			*/
 		}
+		_barcode(cmds.CTL_LF, _raw);
 		return print;
 	};
 
 	
-	/*
-	print.barcode = function(codes, qty, type, width, height, position, font) {
-		for (i=0; i<codes.length; i++) {
-			var code = codes[i];
-			var uri = "http://www.barcodes4.me/barcode/c39/"+code+".png"
-			_dataUrl(uri, {width: 250, height: 100}, _raw);
-			_text((codes[i]+' x '+qty[i]).toBytes(), '', _raw);
-		}
+	print.barcode2 = function(code) {
+		_barcode([0x1D, 0x68, 90], _raw);
+		_barcode(cmds['BARCODE_' + ((type || 'EAN13').replace('-', '_').toUpperCase())], _raw);
+		_barcode(code.toBytes(), _raw);
+		_barcode(cmds.CTL_CR, _raw);
 		return print;
-	}*/
+	}
 	
 
 	print.chinese2x = function(flag) {
