@@ -38,9 +38,9 @@ angular.module('samsungcot.controllers', [])
   
   
   if (!$localStorage.app) { $localStorage.app = app;  }
-  if ($localStorage.app.auth == 0) {
+  /*if ($localStorage.app.auth == 0) {
       $location.path( "login", false );
-  }
+  }*/
 
   $scope.cotizacionNumber = 0;
   
