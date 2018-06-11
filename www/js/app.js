@@ -61,5 +61,5 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
     }
   })
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/home.main');
+  $urlRouterProvider.otherwise('/login');
 });

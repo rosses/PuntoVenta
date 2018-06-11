@@ -520,8 +520,8 @@ angular.module('samsungcot.controllers', [])
   if (!$localStorage.app) { $localStorage.app = app; }
   else {
     if ($localStorage.app.auth == 1) {
-      //$location.path( "home/main", false );
-      $state.go( "home.main" );
+      $location.path( "home/main", false );
+      //$state.go( "home.main" );
     }
   }
   
