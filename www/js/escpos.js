@@ -434,16 +434,12 @@ function escpos (_raw) {
 		_barcode([0x1D, 0x68, height], _raw);
 		//_barcode(cmds['BARCODE_EAN13'], _raw);
 		//_barcode([0x1d, 0x6b, 0x41, 0x0c], _raw);  //UPC BARCODE - No sirve tiene DV
-		_barcode([0x1d, 0x6b, 0x49, 0x0c], _raw); // cODE 128
+		_barcode([0x1d, 0x6b, 0x49, 0x0d], _raw); // cODE 128
 		_barcode(code.toBytes(), _raw);
 		_barcode([0x00], _raw);
 		_barcode(cmds.CTL_CR, _raw);
 		_barcode(cmds.CTL_LF, _raw);
-		_barcode(code.toBytes(), _raw);
-		_barcode(cmds.CTL_CR, _raw);
-		_barcode(cmds.CTL_LF, _raw);
-
-
+		/*
 		_barcode([0x1B, 0x61, 01], _raw);
 		_barcode([0x1D, 0x68, height], _raw);
 		_barcode(cmds['BARCODE_EAN13'], _raw);
@@ -452,6 +448,7 @@ function escpos (_raw) {
 		_barcode(cmds.CTL_LF, _raw);
 		_barcode([ 0x1b, 0x21, 0x10 ], _raw); // texto grande
 		_barcode(code.toBytes(), _raw);
+		*/
 		return print;
 	}
 	
