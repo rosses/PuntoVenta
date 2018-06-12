@@ -336,14 +336,14 @@ angular.module('samsungcot.controllers', [])
       .text('---------------------------')
       .set({align: 'left', width: 1, height: 2})
       .newLine(1)
-      .barcode($scope.getCodigos(),$scope.getCantidades(),$scope.getDescripciones(),'EAN13', 4, 90, 'BLW', 'B')
+      .barcode($scope.getCodigos(),$scope.getCantidades(),$scope.getDescripciones(),'CODE128', 4, 90, 'BLW', 'B')
       .newLine(1)
       .set({align: 'center', width: 1, height: 2})
       .text('---------- TOTAL ----------')
       .newLine(1)
       .newLine(1)
       .set({align: 'left', width: 1, height: 2})
-      .barcode2($scope.cotizacionNumber,'EAN13', 4, 90, 'BLW', 'B')
+      .barcode2($scope.cotizacionNumber,'CODE128', 4, 90, 'BLW', 'B')
       .newLine(1)
       .text('$ '+miles($scope.neto))
       .set({align: 'center', width: 1, height: 1})
@@ -409,6 +409,9 @@ angular.module('samsungcot.controllers', [])
                   }
               );
             }
+            else {
+              $scope.cotLista = [];
+            }
 
             ok('Cotizacion OK. Num. '+data.cotizacion);
             $scope.hideload();
@@ -418,9 +421,6 @@ angular.module('samsungcot.controllers', [])
         }
       }, function(e) { err('err'); err(JSON.stringify(e)); });
 
-
-
-      
       /*ble.isConnected(app.impID, function() {
         ble.writeWithoutResponse(app.impID, app.impSERV, app.impCHAR, buffer, function(x) { 
         	// Estaba conectado y todo OK 1
