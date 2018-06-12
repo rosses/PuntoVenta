@@ -439,7 +439,7 @@ function escpos (_raw) {
 		_barcode([0x00], _raw);
 		_barcode(cmds.CTL_CR, _raw);
 		_barcode(cmds.CTL_LF, _raw);
-		_barcode(codigo.toBytes(), _raw);
+		_barcode(code.toBytes(), _raw);
 		_barcode(cmds.CTL_CR, _raw);
 		_barcode(cmds.CTL_LF, _raw);
 
