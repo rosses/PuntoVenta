@@ -4,13 +4,19 @@ app = {
         impNN: "",
         impSERV: "18F0",
         impCHAR: "2AF1",
-        auth: 0
+        auth: 0,
+        store: 0,
+        code: '',
+        user: '',
+        pass: '',
+        comercio: '',
+        nombre: ''
       };
 var printers = [];
 
 angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $rootScope, $ionicHistory, $state, $localStorage, $ionicPopup) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -24,6 +30,77 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
       StatusBar.styleDefault();
     }
   });
+  $rootScope.statusImpresora = "No conectada";
+  $rootScope.err = function(msg, cb) {
+     var alertPopup = $ionicPopup.alert({
+       title: 'Error',
+       template: (msg ? msg : 'Error al consultar el servicio. Intente más tarde'),
+       buttons: [{
+        text: 'Aceptar',
+        type: 'button-fn'
+        }]
+     });
+
+     alertPopup.then(function(res) {
+       $("body").removeClass("modal-open");
+       if (cb) {
+        cb();
+       }
+     });
+  };
+  $rootScope.ok = function(msg) {
+    
+     var alertPopup = $ionicPopup.alert({
+       title: 'Listo',
+       template: (msg ? msg : 'Operación realizada'),
+       buttons: [{
+        text: 'Aceptar',
+        type: 'button-fn'
+        }]
+     });
+
+     alertPopup.then(function(res) {
+      $("body").removeClass("modal-open");
+      alertPopup.close();
+     });
+     
+     //alert(msg);
+  };
+  $rootScope.confirmar = function(msg, callback,no) {
+   var confirmPopup = $ionicPopup.confirm({
+     title: 'Confirmar',
+     template: (msg ? msg : '¿Desea continuar?'),
+     buttons: [
+      { 
+        text: 'No', 
+        type: 'button-dark',
+        onTap: function(e) { if (no) { $("body").removeClass("modal-open"); no(); } } 
+      },
+      {
+        text: '<b>Aceptar</b>',
+        type: 'button-possitive',
+        onTap: function(e) {
+          $("body").removeClass("modal-open");
+          callback();
+        }
+      },
+     ]
+   });
+  };
+
+
+  $rootScope.cerrarSession = function() {
+    $rootScope.confirmar('Vas a salir de tu cuenta', function() {
+      $localStorage.$reset();
+
+      $ionicHistory.nextViewOptions({
+        disableBack: true,
+        historyRoot: true
+      });
+      $state.go("login");
+    });
+  };
+
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -35,23 +112,40 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
     controller: 'LoginCtrl'
   }) 
 
-  .state('home', {
-    url: '/home',
-    templateUrl: 'templates/home.html',
-    controller: 'HomeCtrl'
+  .state('main', {
+    url: '/main',
+    abstract: true,
+    templateUrl: 'templates/main.html',
+    controller: 'MainCtrl'
   })
 
-  .state('home.main', {
-    url: '/main',
+  .state('main.home', {
+    url: '/home',
     views: {
       'menuContent': {
-        templateUrl: 'templates/main.html',
-        controller: 'MainCtrl'
+        templateUrl: 'templates/home.html',
+        controller: 'HomeCtrl'
       }
+    },
+    params : {
+      reloadPrecios: 0
     }
   })
 
-  .state('home.add', {
+  .state('main.cotizar', {
+    url: '/cotizar',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/cotizar.html',
+        controller: 'CotizarCtrl'
+      }
+    },
+    params : {
+      reloadPrecios: 0
+    }
+  })
+
+  .state('main.add', {
     url: '/add/:search',
     views: {
       'menuContent': {

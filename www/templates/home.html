@@ -1,45 +1,20 @@
-<ion-side-menus enable-menu-with-back-views="false">
-  <ion-side-menu-content>
-    <ion-nav-bar class="bar-stable">
-      <ion-nav-back-button>
-      </ion-nav-back-button>
+<ion-view view-title="PointSale Mobile">
+  <ion-content class="home" on-swipe-right="onSwipeRight($event)" on-swipe-left="onSwipeLeft($event)">
+    <h3>Bienvenido a PointSale</h3>
 
-      <!--
-      <ion-nav-buttons side="left">
-        <button class="button button-icon button-clear" menu-toggle="left">
-        	<i class="fa fa-gear fa-fw"></i>
-        </button>
-      </ion-nav-buttons>
-      -->
-    </ion-nav-bar>
-    <ion-nav-view name="menuContent"></ion-nav-view>
-  </ion-side-menu-content>
-  <!--
-  <ion-side-menu side="left">
-    <ion-header-bar class="bar-stable">
-      <h1 class="title">Impresora Bluetooth</h1>
-    </ion-header-bar>
-	    <ion-content>
-	    <h3 ng-show="noPrinterFound">
-	      <div class="text-center">
-	      <i class="fa fa-ban fa-3x"></i><br /><br />
-	      </div>
-	      No se han encontrado dispositivos.<br /><br />
-	      Verifique su encendido y pulse refrescar o siguiente para continuar sin una impresora.
-	    </h3>
+    <h5>Selecciona una herramienta para comenzar</h5>
+    
+    <div class="row">
+      <div class="col col-33">
+        <a ng-click="goCompras();"><img src="img/cargo.png" /> <br /> Compras</a>
+      </div>
+      <div class="col col-33">
+        <a ng-click="goCotizar();"><img src="img/pos.png" /> <br /> Cotizador </a>
+      </div>
+      <div class="col col-33">
+        <a ng-click="goInventario();"><img src="img/warehouse.png" /> <br />  Inventario</a>
+      </div>
+    </div>
 
-	    <ion-list>
-	      <ion-radio ng-repeat="printer in printerList" data-nombre="{{printer.nombre}}" ng-click="impActivar($event)" ng-model="printerbox.sel" ng-value="printer.id">{{printer.nombre}}</ion-radio>
-	    </ion-list>
-      <br /><br />
-	    <div class="loading text-center" ng-show="cargandoPrinters">
-	      <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
-	    </div>
-      <br /><br />
-	    <div class="text-center">
-	      <button class="button button-positive" ng-click="printRefresh();">REFRESCAR</button>
-	    </div>
-    </ion-content>
-  </ion-side-menu>
-  -->
-</ion-side-menus>
+  </ion-content>
+</ion-view>

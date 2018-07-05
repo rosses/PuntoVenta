@@ -1,28 +1,34 @@
-<ion-view view-title="Login">
-  <ion-content class="padding">
-    <br />
-    <br />
-    <form name="signinForm" novalidate="" ng-submit="signIn(signinForm)">
-
-
-        <label class="item item-input" 
-               ng-class="{ 'has-error-lr' : signinForm.password.$invalid  && signinForm.$submitted, 'valid-lr' : signinForm.password.$valid  && signinForm.$submitted}">
-          <span class="input-label">Clave instalación</span>
-          <input type="password"
-                 name="password"
-                 ng-model="user.password" 
-                 ng-minlength="1" 
-                 ng-maxlength="25"
-                 required>
+<ion-view view-title="Login" class="login" >
+  <ion-content>
+    <div class="text-center logo animated slideInDown">
+      <img src="img/logo.png" />
+    </div>
+    <form ng-submit="signIn()">
+      <div class="login-form">
+        <label>
+          <i class="fa fa-database fa-fw"></i>
+          <input type="text" ng-model="user.code" placeholder="CODIGO EMPRESA">
         </label>
+        <label>
+          <i class="fa fa-user fa-fw"></i>
+          <input type="text" ng-model="user.user" placeholder="USUARIO">
+        </label>
+        <label>
+          <i class="fa fa-lock fa-fw"></i>
+          <input type="password" ng-model="user.pass" placeholder="CONTRASEÑA">
+        </label>
+        
+        <div class="loading" ng-show="cargandoLogin">
+          <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+        </div>
 
+        <div class="botones" ng-show="botonesLogin">
+          <button class="button button-abastible animated slideInDown" type="submit">INGRESAR</button>
+          <!--<button class="button button-abastible-line animated slideInDown" type="button">RECUPERAR CONTRASEÑA</button>-->
+          <br /><br />
+          <div align="center" style="color:white;">v 0.4</div>
+        </div>
       </div>
-      <div class="padding">
-        <button class="button button-block button-positive">
-          Conectarse
-        </button>
-      </div>
-
     </form>
   </ion-content>
 </ion-view>
