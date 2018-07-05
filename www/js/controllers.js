@@ -191,11 +191,6 @@ angular.module('samsungcot.controllers', [])
   };
 
 
-  $scope.neto = 0;
-  $scope.iva = 0;
-  $scope.total = 0;
-
-
   $scope.printRefresh = function() {
     $scope.cargandoPrinters = true;
     $scope.noPrinterFound = false;
@@ -243,7 +238,7 @@ angular.module('samsungcot.controllers', [])
       escpos(_raw)
       .hw()
       .set({align: 'center', width: 1, height: 2})
-      .text($localStorage.app.comercio)
+      .text($localStorage.app.nombre)
       .newLine(1)
       .text('COTIZACION')
       .newLine(1)
@@ -405,6 +400,9 @@ angular.module('samsungcot.controllers', [])
   printers = [];
   $scope.printerList=printers;
   $scope.cotizacionNumber = 0;
+  $scope.neto = 0;
+  $scope.iva = 0;
+  $scope.total = 0;
 
 
 
