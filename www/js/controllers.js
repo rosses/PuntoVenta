@@ -24,7 +24,7 @@ angular.module('samsungcot.controllers', [])
 	},"json").fail(function() { $rootScope.err("No responde el servidor, revise su conexión a internet"); });
 
 	$scope.cancelarAgregar = function() {
-		$state.go("main.cotizar");
+		$state.go("main.cotizar", { reload: true });
 	};
 
 
@@ -238,7 +238,7 @@ angular.module('samsungcot.controllers', [])
       escpos(_raw)
       .hw()
       .set({align: 'center', width: 1, height: 2})
-      .text($localStorage.app.nombre)
+      .text($localStorage.app.comercio)
       .newLine(1)
       .text('COTIZACION')
       .newLine(1)
@@ -267,7 +267,7 @@ angular.module('samsungcot.controllers', [])
     if ($scope.cotLista.length == 0) {
       $rootScope.err("Cotizacion esta vacia");
     }
-    else {
+    else if (like == 1) {
       $scope.showload();
       bluetoothSerial.list(function(devices) {
         var printTo = "";
@@ -330,34 +330,23 @@ angular.module('samsungcot.controllers', [])
           },"json");
 
         }
-      }, function(e) { $rootScope.err("err: ",JSON.stringify(e)); });
-
-      /*ble.isConnected(app.impID, function() {
-        ble.writeWithoutResponse(app.impID, app.impSERV, app.impCHAR, buffer, function(x) { 
-          // Estaba conectado y todo OK 1
-          $scope.cotLista = [];
-        }, function(x) { 
-          err('No se pudo imprimir '+JSON.stringify(x)); 
-        });
-      }, function() {
-
-        ble.connect(app.impID, function(peripheral) {
-          $scope.hideload();
-          ble.writeWithoutResponse(app.impID, app.impSERV, app.impCHAR, buffer, function(x) {
-            // Me he conectado y todo OK 2
-            $scope.cotLista = [];
-          }, function(x) { 
-            err('No se pudo imprimir '+JSON.stringify(x)); 
-          });
-        }, function() { 
-          $scope.hideload();
-          err('Problemas al conectar a su impresora. Valla a configuracion. refrescar y reconecte para imprimir nuevamente.');
-        });
-
-      });*/
-
-      
+      }, function(e) { $rootScope.err("err: ",JSON.stringify(e)); });     
     } 
+    else if (like==0) {
+      $scope.showload();
+      jQuery.post(app.restApi+"services/?action=save&store="+$localStorage.app.store, {codes: $scope.getCodigos().join('|'), qtys: $scope.getCantidades().join('|'), descs: $scope.getDescripciones().join('|')}, function(data) {
+
+        $scope.cotizacionNumber = data.cotizacion;
+        $rootScope.ok('Cotizacion OK. Num. '+data.cotizacion);
+        $scope.hideload();
+        $scope.cotLista = [];
+        $scope.cotizacionNumber = 0;
+        $scope.neto = 0;
+        $scope.iva = 0;
+        $scope.total = 0;
+
+      },"json");
+    }
   };
 
 
