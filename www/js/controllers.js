@@ -287,7 +287,7 @@ angular.module('samsungcot.controllers', [])
           // send server
 
           $scope.showload();
-          jQuery.post(app.restApi+"services/?action=save&store="+localStorage.app.store, {codes: $scope.getCodigos().join('|'), qtys: $scope.getCantidades().join('|'), descs: $scope.getDescripciones().join('|')}, function(data) {
+          jQuery.post(app.restApi+"services/?action=save&store="+$localStorage.app.store, {codes: $scope.getCodigos().join('|'), qtys: $scope.getCantidades().join('|'), descs: $scope.getDescripciones().join('|')}, function(data) {
 
             $scope.cotizacionNumber = data.cotizacion;
 
