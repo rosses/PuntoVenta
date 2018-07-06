@@ -324,7 +324,7 @@ angular.module('samsungcot.controllers', [])
               $scope.cotLista = [];
             }
 
-            ok('Cotizacion OK. Num. '+data.cotizacion);
+            $rootScope.ok('Cotizacion OK. Num. '+data.cotizacion);
             $scope.hideload();
 
           },"json");
