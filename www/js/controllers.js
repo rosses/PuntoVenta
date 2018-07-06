@@ -105,7 +105,7 @@ angular.module('samsungcot.controllers', [])
       jQuery.post(app.restApi+'services/?action=sku&store='+$localStorage.app.store, { alu: result.text }, function(data) {
         $scope.hideload();
         //alert(JSON.stringify(data));
-        if (data.items.length == 0) {
+        if (!data.hasOwnProperty("items") || data.items.length == 0) {
           $rootScope.err("No se encontraron productos");
           $state.go("main.cotizar");
         }
