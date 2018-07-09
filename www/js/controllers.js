@@ -225,6 +225,22 @@ angular.module('samsungcot.controllers', [])
     return ret;
   }
 
+  $scope.getUnitarios = function() {
+    var ret = [];
+    for (var i = 0; i < $scope.cotLista.length ; i++) {
+      ret.push($scope.cotLista[i].precio);
+    }
+    return ret;
+  }
+
+  $scope.getTotales = function() {
+    var ret = [];
+    for (var i = 0; i < $scope.cotLista.length ; i++) {
+      ret.push($scope.cotLista[i].total);
+    }
+    return ret;
+  }
+
 
   $scope.imprimir = function(like) {
     console.log('imprimir? '+like);
@@ -247,7 +263,7 @@ angular.module('samsungcot.controllers', [])
       .text('---------------------------')
       .set({align: 'left', width: 1, height: 2})
       .newLine(1)
-      .barcode($scope.getCodigos(),$scope.getCantidades(),$scope.getDescripciones(),'EAN13', 4, 90, 'BLW', 'B')
+      .barcode($scope.getCodigos(),$scope.getCantidades(),$scope.getUnitarios(),$scope.getTotales(),$scope.getDescripciones(),'EAN13', 4, 90, 'BLW', 'B')
       .newLine(1)
       .set({align: 'center', width: 1, height: 2})
       .text('---------- TOTAL ----------')

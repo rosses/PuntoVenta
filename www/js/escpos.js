@@ -401,8 +401,9 @@ function escpos (_raw) {
 		_text(text, encoding, _raw);
 		return print;
 	};
-	
-	print.barcode = function(codes, qty, desc, type, width, height, position, font) {
+
+
+	print.barcode = function(codes, qty, unitarios, totales, desc, type, width, height, position, font) {
 
 		// centrar
 		//_barcode([0x1B, 0x61, 01], _raw);
@@ -417,7 +418,9 @@ function escpos (_raw) {
 			_barcode([ 0x1b, 0x21, 0x00 ], _raw); // texto chico
 			_barcode(descri, _raw);
 			_barcode(cmds.CTL_LF, _raw);
-			_barcode(code_qty, _raw);
+			_barcode(code_qty+("    $ "+miles(unitarios[i])).toBytes(), _raw);
+			_barcode(cmds.CTL_LF, _raw);
+			_barcode(("Total Item: $ "+miles(totales[i])).toBytes(), _raw);
 			_barcode(cmds.CTL_LF, _raw);
 		}
 		_barcode(cmds.CTL_LF, _raw);
