@@ -2,7 +2,7 @@
 <widget id="com.rosses.puntoventa" version="0.4.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>PointSale</name>
   <description>
-        Cotizador Punto Venta
+        Cotizador Pointsale.cl
     </description>
   <author email="rosses@gmail.com" href="http://www.rosses.cl/">
       Roberto Osses

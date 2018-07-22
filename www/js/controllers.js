@@ -4,13 +4,12 @@ angular.module('samsungcot.controllers', [])
 .controller('AddCtrl', function($scope, $ionicScrollDelegate, $localStorage, filterFilter, $state, $location, $anchorScroll, $rootScope, $stateParams) {
 	$scope.showload();
 	$scope.addprod = {};
-	//alert($scope.cotLista.length);
+
   res = [];
   $scope.resList=res;
 
 	jQuery.post(app.restApi+'services/?action=buscar&store='+$localStorage.app.store, { str: $stateParams.search }, function(data) {
 		$scope.hideload();
-		//alert(JSON.stringify(data));
 		if (data.items.length == 0) {
 			$rootScope.err("No se encontraron productos");
 			$state.go("main.cotizar");
@@ -19,15 +18,12 @@ angular.module('samsungcot.controllers', [])
 			jQuery.each(data.items, function(index) {
 				res.push(data.items[index]);
 			});
-			//alert($scope.cotLista.length);
 		}
 	},"json").fail(function() { $rootScope.err("No responde el servidor, revise su conexión a internet"); });
 
 	$scope.cancelarAgregar = function() {
 		$state.go("main.cotizar", { reload: true });
 	};
-
-
 
 })
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, $rootScope, $ionicSideMenuDelegate, $ionicPopup, $ionicLoading) {
@@ -37,14 +33,18 @@ angular.module('samsungcot.controllers', [])
 .controller('CotizarCtrl', function($scope, $state, $rootScope, $localStorage, $location, $timeout, $ionicLoading, $ionicPopup) {
 
   $scope.lineaMenos = function(codigo) {
-    for (var i = 0; i < $scope.cotLista.length ; i++) {
-      if ($scope.cotLista[i].codigo == codigo) {
-        if (parseInt($scope.cotLista[i].cantidad) < 1) {
+    for (var i = 0; i < $rootScope.cotLista.length ; i++) {
+      if ($rootScope.cotLista[i].codigo == codigo) {
+        if (parseInt($rootScope.cotLista[i].cantidad) == 1) {
           $rootScope.err("Minimo es 1");
         }
         else {
-          $scope.cotLista[i].cantidad = (parseInt($scope.cotLista[i].cantidad) - 1);
-          $scope.cotLista[i].total = ($scope.cotLista[i].precio * $scope.cotLista[i].cantidad); 
+          var nva_qty=(parseInt($rootScope.cotLista[i].cantidad) - 1);
+          if (nva_qty < $rootScope.cotLista[i].qtymayor) {
+            $rootScope.cotLista[i].precio = $rootScope.cotLista[i].preciolista; // rollback price
+          }
+          $rootScope.cotLista[i].cantidad = nva_qty;
+          $rootScope.cotLista[i].total = ($rootScope.cotLista[i].precio * $rootScope.cotLista[i].cantidad); 
         }
         break;
       }
@@ -53,20 +53,23 @@ angular.module('samsungcot.controllers', [])
   };
 
   $scope.lineaMas = function(codigo) {
-    for (var i = 0; i < $scope.cotLista.length ; i++) {
-      if ($scope.cotLista[i].codigo == codigo) {
-        $scope.cotLista[i].cantidad = (parseInt($scope.cotLista[i].cantidad) + 1);
-        $scope.cotLista[i].total = ($scope.cotLista[i].precio * $scope.cotLista[i].cantidad); 
+    for (var i = 0; i < $rootScope.cotLista.length ; i++) {
+      if ($rootScope.cotLista[i].codigo == codigo) {
+        var nva_qty=(parseInt($rootScope.cotLista[i].cantidad) + 1);
+        if (nva_qty >= $rootScope.cotLista[i].qtymayor) {
+          $rootScope.cotLista[i].precio = $rootScope.cotLista[i].preciomayor;
+        }
+        $rootScope.cotLista[i].cantidad = nva_qty;
+        $rootScope.cotLista[i].total = ($rootScope.cotLista[i].precio * $rootScope.cotLista[i].cantidad); 
         break;
       }
     }
     $scope.calcularTotales();
   };
   $scope.lineaChao = function(codigo) {
-    for (var i = 0; i < $scope.cotLista.length ; i++) {
-      if ($scope.cotLista[i].codigo == codigo) {
-        //delete $scope.cotLista[i]; // incompatible
-        $scope.cotLista.splice(i, 1); // borra i
+    for (var i = 0; i < $rootScope.cotLista.length ; i++) {
+      if ($rootScope.cotLista[i].codigo == codigo) {
+        $rootScope.cotLista.splice(i, 1); // borra i
         break;
       }
     }
@@ -104,14 +107,12 @@ angular.module('samsungcot.controllers', [])
 
       jQuery.post(app.restApi+'services/?action=sku&store='+$localStorage.app.store, { alu: result.text }, function(data) {
         $scope.hideload();
-        //alert(JSON.stringify(data));
         if (!data.hasOwnProperty("items") || data.items.length == 0) {
           $rootScope.err("No se encontraron productos");
           $state.go("main.cotizar");
         }
         else {
           $scope.agregarSeleccion(data.items[0]);
-          //alert($scope.cotLista.length);
         }
       },"json").fail(function() { $rootScope.err("No responde el servidor, revise su conexión a internet"); });
 
@@ -137,7 +138,7 @@ angular.module('samsungcot.controllers', [])
 
   $scope.limpiarCotizacion = function() {
     $rootScope.confirmar('¿Limpiar la cotización?', function() {
-      $scope.cotLista = [];
+      $rootScope.cotLista = [];
     });
   
   };
@@ -169,6 +170,7 @@ angular.module('samsungcot.controllers', [])
               }
               else {
                 $rootScope.err('Ingrese 2 letras a lo menos');
+                e.preventDefault();
               }
              }
           }
@@ -204,46 +206,45 @@ angular.module('samsungcot.controllers', [])
   };
   $scope.getCodigos = function() {
     var ret = [];
-    for (var i = 0; i < $scope.cotLista.length ; i++) {
-      ret.push($scope.cotLista[i].codigo);
+    for (var i = 0; i < $rootScope.cotLista.length ; i++) {
+      ret.push($rootScope.cotLista[i].codigo);
     }
     return ret;
   }
 
   $scope.getCantidades = function() {
     var ret = [];
-    for (var i = 0; i < $scope.cotLista.length ; i++) {
-      ret.push($scope.cotLista[i].cantidad);
+    for (var i = 0; i < $rootScope.cotLista.length ; i++) {
+      ret.push($rootScope.cotLista[i].cantidad);
     }
     return ret;
   }
   $scope.getDescripciones = function() {
     var ret = [];
-    for (var i = 0; i < $scope.cotLista.length ; i++) {
-      ret.push($scope.cotLista[i].descripcion);
+    for (var i = 0; i < $rootScope.cotLista.length ; i++) {
+      ret.push($rootScope.cotLista[i].descripcion);
     }
     return ret;
   }
 
   $scope.getUnitarios = function() {
     var ret = [];
-    for (var i = 0; i < $scope.cotLista.length ; i++) {
-      ret.push($scope.cotLista[i].precio);
+    for (var i = 0; i < $rootScope.cotLista.length ; i++) {
+      ret.push($rootScope.cotLista[i].precio);
     }
     return ret;
   }
 
   $scope.getTotales = function() {
     var ret = [];
-    for (var i = 0; i < $scope.cotLista.length ; i++) {
-      ret.push($scope.cotLista[i].total);
+    for (var i = 0; i < $rootScope.cotLista.length ; i++) {
+      ret.push($rootScope.cotLista[i].total);
     }
     return ret;
   }
 
 
   $scope.imprimir = function(like) {
-    console.log('imprimir? '+like);
     function objetoImprimir() {
 
       var buffer = [];
@@ -270,9 +271,9 @@ angular.module('samsungcot.controllers', [])
       .newLine(1)
       .newLine(1)
       .set({align: 'left', width: 1, height: 2})
-      .barcode2($scope.cotizacionNumber,'EAN13', 4, 90, 'BLW', 'B')
+      .barcode2($rootScope.cotizacionNumber,'EAN13', 4, 90, 'BLW', 'B')
       .newLine(1)
-      .text('$ '+miles($scope.neto))
+      .text('$ '+miles($rootScope.neto))
       .set({align: 'center', width: 1, height: 1})
       .cut();
 
@@ -280,7 +281,7 @@ angular.module('samsungcot.controllers', [])
 
     };
 
-    if ($scope.cotLista.length == 0) {
+    if ($rootScope.cotLista.length == 0) {
       $rootScope.err("Cotizacion esta vacia");
     }
     else if (like == 1) {
@@ -303,9 +304,9 @@ angular.module('samsungcot.controllers', [])
           // send server
 
           $scope.showload();
-          jQuery.post(app.restApi+"services/?action=save&store="+$localStorage.app.store, {codes: $scope.getCodigos().join('|'), qtys: $scope.getCantidades().join('|'), descs: $scope.getDescripciones().join('|')}, function(data) {
+          jQuery.post(app.restApi+"services/?action=save&store="+$localStorage.app.store+"&userid="+$localStorage.app.userid, {codes: $scope.getCodigos().join('|'), qtys: $scope.getCantidades().join('|') }, function(data) {
 
-            $scope.cotizacionNumber = data.cotizacion;
+            $rootScope.cotizacionNumber = data.cotizacion;
 
             if (like == 1) {
               var buffer = new Uint8Array(objetoImprimir()).buffer;
@@ -314,7 +315,7 @@ angular.module('samsungcot.controllers', [])
                   function() {
                       bluetoothSerial.write(buffer, function() {
                         $scope.hideload();
-                        $scope.cotLista = [];
+                        $rootScope.cotLista = [];
                       }, function() {
                         $scope.hideload();
                         $rootScope.err('No se pudo imprimir');
@@ -324,7 +325,7 @@ angular.module('samsungcot.controllers', [])
                       bluetoothSerial.connect(printTo, function() {
                         bluetoothSerial.write(buffer, function() {
                           $scope.hideload();
-                          $scope.cotLista = [];
+                          $rootScope.cotLista = [];
                         }, function() {
                           $scope.hideload();
                           $rootScope.err('No se pudo imprimir');
@@ -337,10 +338,10 @@ angular.module('samsungcot.controllers', [])
               );
             }
             else {
-              $scope.cotLista = [];
+              $rootScope.cotLista = [];
             }
 
-            $rootScope.ok('Cotizacion OK. Num. '+data.cotizacion);
+            $rootScope.ok('Cotizacion OK<h3>'+data.cotizacion+'</h3>');
             $scope.hideload();
 
           },"json");
@@ -350,16 +351,16 @@ angular.module('samsungcot.controllers', [])
     } 
     else if (like==0) {
       $scope.showload();
-      jQuery.post(app.restApi+"services/?action=save&store="+$localStorage.app.store, {codes: $scope.getCodigos().join('|'), qtys: $scope.getCantidades().join('|'), descs: $scope.getDescripciones().join('|')}, function(data) {
+      jQuery.post(app.restApi+"services/?action=save&store="+$localStorage.app.store+"&userid="+$localStorage.app.userid, {codes: $scope.getCodigos().join('|'), qtys: $scope.getCantidades().join('|') }, function(data) {
 
-        $scope.cotizacionNumber = data.cotizacion;
-        $rootScope.ok('Cotizacion OK. Num. '+data.cotizacion);
+        $rootScope.cotizacionNumber = data.cotizacion;
+        $rootScope.ok('Cotizacion OK<h3>'+data.cotizacion+'</h3>');
         $scope.hideload();
-        $scope.cotLista = [];
-        $scope.cotizacionNumber = 0;
-        $scope.neto = 0;
-        $scope.iva = 0;
-        $scope.total = 0;
+        $rootScope.cotLista = [];
+        $rootScope.cotizacionNumber = 0;
+        $rootScope.neto = 0;
+        $rootScope.iva = 0;
+        $rootScope.total = 0;
 
       },"json");
     }
@@ -398,18 +399,16 @@ angular.module('samsungcot.controllers', [])
 .controller('MainCtrl', function($scope, $state, $localStorage, $rootScope, $location, $ionicLoading, $ionicSideMenuDelegate) {
 
   /* Scopes for cotizador */
-  $scope.cotLista = [];
+  $rootScope.cotLista = [];
   $scope.printerbox = {};
   $scope.cargandoPrinters = false;
   $scope.noPrinterFound = false;
   printers = [];
   $scope.printerList=printers;
-  $scope.cotizacionNumber = 0;
-  $scope.neto = 0;
-  $scope.iva = 0;
-  $scope.total = 0;
-
-
+  $rootScope.cotizacionNumber = 0;
+  $rootScope.neto = 0;
+  $rootScope.iva = 0;
+  $rootScope.total = 0;
 
   $ionicSideMenuDelegate.canDragContent(false);
  
@@ -446,13 +445,19 @@ angular.module('samsungcot.controllers', [])
   $scope.agregarSeleccion = function(item) {
     if (item) { //$scope.addprod.sel
       // verificar existe
-      console.log(item);
       var modificaExistente = 0;
-      for (var i = 0; i < $scope.cotLista.length ; i++) {
-        if ($scope.cotLista[i].codigo == item.codigo) {
-          $scope.cotLista[i].cantidad = (parseInt($scope.cotLista[i].cantidad) + 1);
-          $scope.cotLista[i].total = ($scope.cotLista[i].precio * $scope.cotLista[i].cantidad); 
+      for (var i = 0; i < $rootScope.cotLista.length ; i++) {
+        if ($rootScope.cotLista[i].codigo == item.codigo) {
+
+          var nva_qty=(parseInt($rootScope.cotLista[i].cantidad) + 1);
+          if (nva_qty >= $rootScope.cotLista[i].qtymayor) {
+            $rootScope.cotLista[i].precio = $rootScope.cotLista[i].preciomayor;
+          }
+
+          $rootScope.cotLista[i].cantidad = nva_qty;
+          $rootScope.cotLista[i].total = ($rootScope.cotLista[i].precio * $rootScope.cotLista[i].cantidad); 
           modificaExistente = 1;
+          console.log('modificaExistente = 1');
           break;
         }
       }
@@ -460,7 +465,8 @@ angular.module('samsungcot.controllers', [])
       if (modificaExistente == 0) {
         item.cantidad = 1;
         item.total = (parseInt(item.precio) * 1);
-        $scope.cotLista.push(item);
+        $rootScope.cotLista.push(item);
+        console.log('modificaExistente = 0');
       }
 
       $scope.calcularTotales();
@@ -474,16 +480,16 @@ angular.module('samsungcot.controllers', [])
 
   $scope.calcularTotales = function() {
     var neto = 0;
-    for (var i = 0; i < $scope.cotLista.length ; i++) {
-      neto = parseInt(neto) + parseInt($scope.cotLista[i].total);
+    for (var i = 0; i < $rootScope.cotLista.length ; i++) {
+      neto = parseInt(neto) + parseInt($rootScope.cotLista[i].total);
     }
 
     var iva = Math.round(neto * 0.19);
     var total = neto + iva;
 
-    $scope.neto = neto;
-    $scope.iva = iva;
-    $scope.total = total;
+    $rootScope.neto = neto;
+    $rootScope.iva = iva;
+    $rootScope.total = total;
 
   };
 
@@ -523,6 +529,7 @@ angular.module('samsungcot.controllers', [])
     jQuery.post(app.restApi+"services/?action=validarLogin", {code: $scope.user.code, user: $scope.user.user, pass: $scope.user.pass}, function(data) {
       if (data.valid == 1) {
         app.auth = 1;
+        app.userid = data.userid;
         app.user = $scope.user.user;
         app.pass = $scope.user.pass;
         app.code = $scope.user.code;

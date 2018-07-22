@@ -190,7 +190,7 @@ ion-content.cotizar {
 .addProducto .item {  }
 .addProducto .item div.rojo { width: 10%; color: red; display:inline-block; } /* N/A */
 
-.addProducto .item div.d { width: 50%; display:inline-block; }
+.addProducto .item div.d { display:inline-block; }
 .addProducto .item div.azul { width: 15%; color: blue; display:inline-block; }
 .addProducto .item div.negro { width: 15%; font-weight: bold; display:inline-block; }
 .addProducto .item div.add { width: 20%; display:inline-block; text-align: center; }

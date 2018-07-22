@@ -6,6 +6,7 @@ app = {
         impCHAR: "2AF1",
         auth: 0,
         store: 0,
+        userid: 0,
         code: '',
         user: '',
         pass: '',
@@ -103,7 +104,10 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
 
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
+
+  $ionicConfigProvider.backButton.previousTitleText(false).text('');
+
   $stateProvider
 
   .state('login', {
@@ -156,4 +160,11 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
   })
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
-});
+})
+.filter('price', [
+function() { // should be altered to suit your needs
+    return function(input) {
+      var ret=(input)?input.toString().trim().replace(",",".").toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."):0;
+      return ("$ "+ret);
+    };
+}]);
